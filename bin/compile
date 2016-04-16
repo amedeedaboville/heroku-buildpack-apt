@@ -55,7 +55,7 @@ apt-get $APT_OPTIONS update --fix-missing | indent
 
 
 topic "Running dpgk configure -a"
-apt-get -u dist-upgrade
+apt-get $APT_OPTIONS -u dist-upgrade
 
 for PACKAGE in $(cat $BUILD_DIR/Aptfile); do
   if [[ $PACKAGE == *deb ]]; then
