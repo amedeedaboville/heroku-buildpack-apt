@@ -55,7 +55,6 @@ apt-get $APT_OPTIONS update --fix-missing | indent
 
 
 topic "Running dpgk configure -a"
-dpkg --configure -a
 apt-get -u dist-upgrade
 
 for PACKAGE in $(cat $BUILD_DIR/Aptfile); do
