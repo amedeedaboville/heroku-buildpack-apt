@@ -53,9 +53,9 @@ gpg --ignore-time-conflict --no-options --no-default-keyring --homedir $GPG_HOME
 topic "Updating apt caches"
 apt-get $APT_OPTIONS update --fix-missing | indent
 
-topic "Using aptitude"
-apt-get $APT_OPTIONS install aptitude | indent
-aptitude $APT_OPTIONS install mono-complete
+#topic "Using aptitude"
+#apt-get $APT_OPTIONS install aptitude | indent
+#aptitude $APT_OPTIONS install mono-complete
 topic "Running dist upgrade"
 apt-get $APT_OPTIONS -u dist-upgrade
 
