@@ -51,7 +51,7 @@ topic "Adding mono key"
 gpg --ignore-time-conflict --no-options --no-default-keyring --homedir $GPG_HOME_DIR --keyring $GPG_KEYRING_FILE --import $GPG_KEY_FILE
 
 topic "Updating apt caches"
-apt-get $APT_OPTIONS update | indent
+apt-get $APT_OPTIONS update --fix-missing | indent
 
 for PACKAGE in $(cat $BUILD_DIR/Aptfile); do
   if [[ $PACKAGE == *deb ]]; then
