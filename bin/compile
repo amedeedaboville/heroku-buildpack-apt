@@ -11,6 +11,7 @@ set -e
 BUILD_DIR=$1
 CACHE_DIR=$2
 LP_DIR=`cd $(dirname $0); cd ..; pwd`
+BUILDPACK_DIR=`cd $(dirname $0); cd ..; pwd`
 
 function error() {
   echo " !     $*" >&2
@@ -29,18 +30,25 @@ function indent() {
   esac
 }
 
+APT_BUILD_DIR="$BUILD_DIR/.apt"
 APT_CACHE_DIR="$CACHE_DIR/apt/cache"
 APT_STATE_DIR="$CACHE_DIR/apt/state"
+APT_REPO_FILE="$BUILDPACK_DIR/etc/mono-xamarin.list"
+
+GPG_HOME_DIR="$BUILD_DIR/.gnupg"
+GPG_KEYRING_FILE="$BUILD_DIR/.apt/trusted.gpg"
+GPG_KEY_FILE="$BUILDPACK_DIR/etc/mono.gpg"
 
 mkdir -p "$APT_CACHE_DIR/archives/partial"
 mkdir -p "$APT_STATE_DIR/lists/partial"
+mkdir -p "$APT_BUILD_DIR"
+mkdir -p "$GPG_HOME_DIR"
 
-APT_OPTIONS="-o debug::nolocking=true -o dir::cache=$APT_CACHE_DIR -o dir::state=$APT_STATE_DIR"
+APT_OPTIONS="-o debug::nolocking=true -o Dir::Etc::Trusted=$GPG_KEYRING_FILE -o Dir::Etc::SourceList=$APT_REPO_FILE -o dir::cache=$APT_CACHE_DIR -o dir::state=$APT_STATE_DIR"
+
 
 topic "Adding mono key"
-apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
-topic "Adding mono to/etc/apt/sources.list.d./mono-xamarin.list"
-echo "deb http://download.mono-project.com/repo/debian wheezy main" | tee /etc/apt/sources.list.d/mono-xamarin.list
+gpg --ignore-time-conflict --no-options --no-default-keyring --homedir $GPG_HOME_DIR --keyring $GPG_KEYRING_FILE --import $GPG_KEY_FILE
 
 topic "Updating apt caches"
 apt-get $APT_OPTIONS update | indent
@@ -58,7 +66,6 @@ for PACKAGE in $(cat $BUILD_DIR/Aptfile); do
   fi
 done
 
-mkdir -p $BUILD_DIR/.apt
 
 for DEB in $(ls -1 $APT_CACHE_DIR/archives/*.deb); do
   topic "Installing $(basename $DEB)"
