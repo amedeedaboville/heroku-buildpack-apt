@@ -64,6 +64,7 @@ for PACKAGE in $(cat $BUILD_DIR/Aptfile); do
 
     topic "Fetching $PACKAGE"
     curl -s -L -z $PACKAGE_FILE -o $PACKAGE_FILE $PACKAGE 2>&1 | indent
+    dpkg --install --recursive --auto-deconfigure $PACKAGE_FILE
   else
     topic "Fetching .debs for $PACKAGE"
     apt-get $APT_OPTIONS -y --force-yes -d install --reinstall $PACKAGE | indent
@@ -75,7 +76,7 @@ done
 
 for DEB in $(ls -1 $APT_CACHE_DIR/archives/*.deb); do
   topic "Installing $(basename $DEB)"
-  dpkg --install --recursive --auto-deconfigure $DEB $BUILD_DIR/.apt/
+  dpkg -x $DEB $BUILD_DIR/.apt/
 done
 
 topic "Writing profile script"
