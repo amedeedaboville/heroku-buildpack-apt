@@ -75,7 +75,7 @@ done
 
 for DEB in $(ls -1 $APT_CACHE_DIR/archives/*.deb); do
   topic "Installing $(basename $DEB)"
-  dpkg -x $DEB $BUILD_DIR/.apt/
+  dpkg --install --recursive --auto-deconfigure $DEB $BUILD_DIR/.apt/
 done
 
 topic "Writing profile script"
