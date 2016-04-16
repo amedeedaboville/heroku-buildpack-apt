@@ -53,6 +53,11 @@ gpg --ignore-time-conflict --no-options --no-default-keyring --homedir $GPG_HOME
 topic "Updating apt caches"
 apt-get $APT_OPTIONS update --fix-missing | indent
 
+
+topic "Running dpgk configure -a"
+dpkg --configure -a
+apt-get -u dist-upgrade
+
 for PACKAGE in $(cat $BUILD_DIR/Aptfile); do
   if [[ $PACKAGE == *deb ]]; then
     PACKAGE_NAME=$(basename $PACKAGE .deb)
@@ -63,6 +68,7 @@ for PACKAGE in $(cat $BUILD_DIR/Aptfile); do
   else
     topic "Fetching .debs for $PACKAGE"
     apt-get $APT_OPTIONS -y --force-yes -d install --reinstall $PACKAGE | indent
+    apt-get install -f
   fi
 done
 
