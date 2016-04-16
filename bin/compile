@@ -57,6 +57,7 @@ apt-get $APT_OPTIONS update --fix-missing | indent
 topic "Running dpgk configure -a"
 apt-get $APT_OPTIONS -u dist-upgrade
 
+apt-get $APT_OPTIONS -y --force-yes -d install --reinstall libmono2.0-cil mono-runtime | indent
 for PACKAGE in $(cat $BUILD_DIR/Aptfile); do
   if [[ $PACKAGE == *deb ]]; then
     PACKAGE_NAME=$(basename $PACKAGE .deb)
@@ -68,8 +69,6 @@ for PACKAGE in $(cat $BUILD_DIR/Aptfile); do
   else
     topic "Fetching .debs for $PACKAGE"
     apt-get $APT_OPTIONS -y --force-yes -d install --reinstall $PACKAGE | indent
-    #apt-get $APT_OPTIONS install -f
-    #apt-get $APT_OPTIONS -y --force-yes -d install $PACKAGE | indent
   fi
 done
 
